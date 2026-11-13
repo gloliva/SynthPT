@@ -2,6 +2,9 @@
 @import "smuck"
 
 public class ScoreManager {
+    -1 => int PREV_SCORE;
+    1 => int NEXT_SCORE;
+
     Score prevScore;
     Score currScore;
     Score nextScore;
@@ -49,6 +52,7 @@ public class ScoreManager {
             } else if (Events.scorePlayerEvent.eventType == ScorePlayerEvent.NEXT) {
                 this.next();
             } else if (Events.scorePlayerEvent.eventType == ScorePlayerEvent.PREV) {
+                <<< "we are here, no?" >>>;
                 this.prev();
             }
         }
@@ -75,7 +79,19 @@ public class ScoreManager {
     }
 
     fun void prev() {
+        if (this.player.pos() > 0) {
+            if (this.player.isPlaying()) {
+                this.player.stop();
+            }
 
+            0 => this.player.pos;
+            Events.playToggleEvent.set(1);
+            Events.playToggleEvent.signal();
+
+            this.player.play();
+        } else {
+            <<< "What player pos are we at?", this.player.pos() >>>;
+        }
     }
 
     fun void updateCurrentScore(int delta) {
@@ -88,6 +104,11 @@ public class ScoreManager {
         <<< "Current score Idx:", this.currScoreIdx >>>;
 
         // Parse new scores
+        if (delta == this.NEXT_SCORE) {
+
+        } else if (delta == this.PREV_SCORE) {
+
+        }
         this.currScore.parse(Utils.joinPath(this.openDirName, scoreFiles[this.currScoreIdx]));
         this.nextScore.parse(Utils.joinPath(this.openDirName, scoreFiles[(this.currScoreIdx + 1) % scoreFiles.size()]));
     }
@@ -96,7 +117,9 @@ public class ScoreManager {
         while (true) {
             if (this.player.isPlaying()) {
                 Events.scorePosEvent.set(this.player.pos(), this.player.endPos());
-                Events.scorePosEvent.broadcast();
+                Events.scorePosEvent.signal();
+            } else {
+                <<< "did we finish?", this.player.pos() >>>;
             }
 
             25::ms => now;

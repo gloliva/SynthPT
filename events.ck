@@ -13,6 +13,16 @@ public class ScorePlayerEvent extends Event {
 }
 
 
+public class PlayToggleEvent extends Event {
+    int val;
+
+    fun void set(int val) {
+        val => this.val;
+    }
+}
+
+
+
 public class ScorePosEvent extends Event {
     float currPos;
     float endPos;
@@ -26,5 +36,6 @@ public class ScorePosEvent extends Event {
 
 public class Events {
     static ScorePlayerEvent scorePlayerEvent;
+    static PlayToggleEvent playToggleEvent;
     static ScorePosEvent scorePosEvent;
 }

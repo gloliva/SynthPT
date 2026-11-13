@@ -5,6 +5,7 @@
 MainMenu mainMenu();
 spork ~ mainMenu.updateUI();
 spork ~ mainMenu.updateScorePos();
+spork ~ mainMenu.updatePlayToggle();
 spork ~ mainMenu.run();
 
 

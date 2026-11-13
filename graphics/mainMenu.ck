@@ -39,7 +39,7 @@ public class MainMenu {
             UIStyle.pushVar(UIStyle.VAR_BUTTON_BORDER_RADIUS, 1.0);
             UIStyle.pushVar(UIStyle.VAR_BUTTON_SIZE, ChuGUI.NDCToWorldSize(@(0.2, 0.12)));
             UIStyle.pushVar(UIStyle.VAR_BUTTON_ICON_SIZE, 0.4);
-            gui.toggleButton("", playIconFile, @(0., 0.), this.playToggle) => this.playToggle;
+            gui.toggleButton("", playIconFile, @(0., -0.2), this.playToggle) => this.playToggle;
             UIStyle.popVar(4);
             UIStyle.popColor(2);
 
@@ -52,7 +52,7 @@ public class MainMenu {
                     0 => this.playIconIdx;
                     Events.scorePlayerEvent.set(Events.scorePlayerEvent.PAUSE);
                 }
-                Events.scorePlayerEvent.broadcast();
+                Events.scorePlayerEvent.signal();
 
                 this.playToggle => this.prevPlayToggle;
             }
@@ -63,14 +63,14 @@ public class MainMenu {
             UIStyle.pushVar(UIStyle.VAR_BUTTON_BORDER_RADIUS, 1.0);
             UIStyle.pushVar(UIStyle.VAR_BUTTON_SIZE, ChuGUI.NDCToWorldSize(@(0.12, 0.12)));
             UIStyle.pushVar(UIStyle.VAR_BUTTON_ICON_SIZE, 0.3);
-            gui.button("", me.dir() + "../assets/" + this.nextIcon, @(0.2, 0.)) => int nextClicked;
+            gui.button("", me.dir() + "../assets/" + this.nextIcon, @(0.2, -0.2)) => int nextClicked;
             UIStyle.popVar(3);
             UIStyle.popColor(2);
 
             if (nextClicked) {
                 <<< "did we click next?" >>>;
                 Events.scorePlayerEvent.set(Events.scorePlayerEvent.NEXT);
-                Events.scorePlayerEvent.broadcast();
+                Events.scorePlayerEvent.signal();
             }
 
             // Prev button
@@ -79,14 +79,13 @@ public class MainMenu {
             UIStyle.pushVar(UIStyle.VAR_BUTTON_BORDER_RADIUS, 1.0);
             UIStyle.pushVar(UIStyle.VAR_BUTTON_SIZE, ChuGUI.NDCToWorldSize(@(0.12, 0.12)));
             UIStyle.pushVar(UIStyle.VAR_BUTTON_ICON_SIZE, 0.3);
-            gui.button("", me.dir() + "../assets/" + this.prevIcon, @(-0.2, 0.)) => int prevClicked;
+            gui.button("", me.dir() + "../assets/" + this.prevIcon, @(-0.2, -0.2)) => int prevClicked;
             UIStyle.popVar(3);
             UIStyle.popColor(2);
 
             if (prevClicked) {
-                <<< "did we click prev?" >>>;
                 Events.scorePlayerEvent.set(Events.scorePlayerEvent.PREV);
-                Events.scorePlayerEvent.broadcast();
+                Events.scorePlayerEvent.signal();
             }
 
             // Seek bar slider
@@ -96,9 +95,19 @@ public class MainMenu {
             UIStyle.pushVar(UIStyle.VAR_SLIDER_HANDLE_BORDER_RADIUS, 0.4);
             UIStyle.pushVar(UIStyle.VAR_SLIDER_TRACK_BORDER_WIDTH, 0.2);
             UIStyle.pushVar(UIStyle.VAR_SLIDER_HANDLE_SIZE, @(0.1, 0.3));
-            gui.slider("seeker", @(0, 0.2), 0, 1, seekerPos) => seekerPos;
+            gui.slider("seeker", @(0, 0.0), 0, 1, seekerPos) => seekerPos;
             UIStyle.popVar(4);
             UIStyle.popColor(2);
+        }
+    }
+
+    fun void updatePlayToggle() {
+        while (true) {
+            Events.playToggleEvent => now;
+            Events.playToggleEvent.val => this.playToggle;
+            Events.playToggleEvent.val => this.prevPlayToggle;
+            Events.playToggleEvent.val => this.playIconIdx;
+
         }
     }
 
