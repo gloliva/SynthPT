@@ -103,7 +103,7 @@ public class Score {
                     }
                 }
 
-                measure.print();
+                // measure.print();
                 repeat(repeats) {
                     parts[voice].add(measure.copy());
                 }

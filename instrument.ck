@@ -68,6 +68,12 @@ public class CVInstrument extends ezInstrument {
     }
 
     fun void noteOff(ezNote note, int voice) {
+        // Check if score is being paused and an empty Off note is sent
+        if (note.data().size() < 2) {
+            0. => this.gate.next;
+            return;
+        }
+
         note.data()[1]$int => int noteID;
 
         if (noteID == this.currNote) {

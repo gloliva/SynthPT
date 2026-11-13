@@ -1,22 +1,16 @@
-@import "scoreParser.ck"
+@import {"scoreParser.ck", "scoreManager.ck"}
 @import "./graphics/mainMenu.ck"
 
 
 MainMenu mainMenu();
+spork ~ mainMenu.updateUI();
+spork ~ mainMenu.updateScorePos();
+spork ~ mainMenu.run();
 
 
-Score score;
-score.parse("./scores/song1.json");
-score.printScore();
+ScoreManager scoreManager;
+spork ~ scoreManager.run();
+spork ~ scoreManager.sendScorePos();
+scoreManager.openDirectory("./scores");
 
-
-ezScorePlayer player;
-player.score(score.score);
-player.instruments(score.instruments);
-
-
-player.play();
-score.score.duration() => now;
-<<< "Done playing" >>>;
-
-5::second => now;
+eon => now;
