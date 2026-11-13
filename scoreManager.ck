@@ -1,4 +1,4 @@
-@import {"events.ck", "logger.ck", "scoreParser.ck", "utils.ck"}
+@import {"events.ck", "instrument.ck", "logger.ck", "scoreParser.ck", "utils.ck"}
 @import "smuck"
 
 public class ScoreManager {
@@ -35,6 +35,16 @@ public class ScoreManager {
         // TODO: add validation for file, make sure its JSON
         this.currScore.parse(Utils.joinPath(this.openDirName, scoreFiles[this.currScoreIdx]));
         this.nextScore.parse(Utils.joinPath(this.openDirName, scoreFiles[(this.currScoreIdx + 1) % scoreFiles.size()]));
+
+        this.currScoreIdx - 1 => int prevScoreIdx;
+        if (prevScoreIdx < 0) {
+            this.scoreFiles.size() + prevScoreIdx => prevScoreIdx;
+        }
+        this.prevScore.parse(Utils.joinPath(this.openDirName, scoreFiles[prevScoreIdx]));
+
+        <<< "hhhh", this.currScore.name, this.nextScore.name >>>;
+        Events.scoreNamesEvent.set(this.currScore.name, this.nextScore.name);
+        Events.scoreNamesEvent.broadcast();
 
         // Set up ScorePlayer
         this.player.score(this.currScore.score);
@@ -73,9 +83,12 @@ public class ScoreManager {
     }
 
     fun void next() {
-        // if (this.player.isPlaying()) {
-        //     this.player.stop();
-        // }
+        if (this.player.isPlaying()) {
+            this.player.stop();
+        }
+
+        this.updateCurrentScore(this.NEXT_SCORE);
+        this.player.play();
     }
 
     fun void prev() {
@@ -103,23 +116,37 @@ public class ScoreManager {
         this.scoreFiles.size() %=> this.currScoreIdx;
         <<< "Current score Idx:", this.currScoreIdx >>>;
 
+        // Disconnect current instruments from DAC
+        for (CVInstrument instrument : this.currScore.instruments) {
+            instrument.disconnect();
+        }
+
         // Parse new scores
         if (delta == this.NEXT_SCORE) {
+            <<< "moving to next score" >>>;
+            currScore @=> this.prevScore;
+            nextScore @=> this.currScore;
+            this.nextScore.parse(Utils.joinPath(this.openDirName, scoreFiles[(this.currScoreIdx + 1) % scoreFiles.size()]));
 
+            this.player.score(this.currScore.score);
+            this.player.instruments(this.currScore.instruments);
+            0 => this.player.pos;
         } else if (delta == this.PREV_SCORE) {
 
         }
-        this.currScore.parse(Utils.joinPath(this.openDirName, scoreFiles[this.currScoreIdx]));
-        this.nextScore.parse(Utils.joinPath(this.openDirName, scoreFiles[(this.currScoreIdx + 1) % scoreFiles.size()]));
     }
 
-    fun void sendScorePos() {
+    fun void scorePosTracker() {
         while (true) {
             if (this.player.isPlaying()) {
                 Events.scorePosEvent.set(this.player.pos(), this.player.endPos());
                 Events.scorePosEvent.signal();
             } else {
-                <<< "did we finish?", this.player.pos() >>>;
+                if (this.player.pos() >= this.player.endPos()) {
+                    <<< "Waiting......" >>>;
+                    2::second => now;
+                    this.next();
+                }
             }
 
             25::ms => now;

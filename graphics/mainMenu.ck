@@ -12,6 +12,10 @@ public class MainMenu {
     "next.png" => string nextIcon;
     "prev.png" => string prevIcon;
 
+    // Song names
+    string currSongName;
+    string nextSongName;
+
     // Seeker
     float seekerPos;
 
@@ -29,6 +33,15 @@ public class MainMenu {
 
         while (true) {
             GG.nextFrame() => now; // must be called before rendering any components
+
+            // Labels
+            UIStyle.pushColor(UIStyle.COL_LABEL, Color.WHITE);
+            UIStyle.pushVar(UIStyle.VAR_LABEL_SIZE, 0.25);
+            UIStyle.pushVar(UIStyle.VAR_LABEL_CONTROL_POINTS, @(0, 0.5));
+            gui.label("Now playing: " + this.currSongName, @(-0.4, 0.3));
+            gui.label("Up next: " + this.nextSongName, @(-0.4, 0.2));
+            UIStyle.popVar(2);
+            UIStyle.popColor(1);
 
             // Play/Pause Button
             me.dir() + "../assets/" + this.playIcons[this.playIconIdx] => string playIconFile;
@@ -98,6 +111,14 @@ public class MainMenu {
             gui.slider("seeker", @(0, 0.0), 0, 1, seekerPos) => seekerPos;
             UIStyle.popVar(4);
             UIStyle.popColor(2);
+        }
+    }
+
+    fun void updateScoreNames() {
+        while (true) {
+            Events.scoreNamesEvent => now;
+            Events.scoreNamesEvent.currSong => this.currSongName;
+            Events.scoreNamesEvent.next => this.nextSongName;
         }
     }
 

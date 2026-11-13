@@ -87,4 +87,18 @@ public class CVInstrument extends ezInstrument {
         10::ms => now;
         0. => this.trigger.next;
     }
+
+    fun void disconnect() {
+        for (int outIdx; outIdx < this.outputs.size(); outIdx++) {
+            this.outputs[outIdx] => string output;
+
+            if (output == CVOutputType.PITCH) {
+                this.pitch =< dac.chan(startChan + outIdx);
+            } else if (output == CVOutputType.GATE) {
+                this.gate =< dac.chan(startChan + outIdx);
+            } else if (output == CVOutputType.TRIGGER) {
+                this.trigger =< dac.chan(startChan + outIdx);
+            }
+        }
+    }
 }
