@@ -14,12 +14,12 @@ public class ScorePlayerEvent extends Event {
 
 
 public class ScoreNamesEvent extends Event {
-    string currSong;
-    string nextSong;
+    string curr;
+    string next;
 
     fun void set(string curr, string next) {
-        curr => this.currSong;
-        next => this.nextSong;
+        curr => this.curr;
+        next => this.next;
     }
 }
 

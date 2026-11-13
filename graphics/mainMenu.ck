@@ -117,7 +117,7 @@ public class MainMenu {
     fun void updateScoreNames() {
         while (true) {
             Events.scoreNamesEvent => now;
-            Events.scoreNamesEvent.currSong => this.currSongName;
+            Events.scoreNamesEvent.curr => this.currSongName;
             Events.scoreNamesEvent.next => this.nextSongName;
         }
     }
