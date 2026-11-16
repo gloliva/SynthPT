@@ -126,6 +126,9 @@ public class ScoreManager {
         this.player.score(this.currScore.score);
         this.player.instruments(this.currScore.instruments);
         0 => this.player.pos;
+
+        Events.scoreNamesEvent.set(this.currScore.name, "TODO");
+        Events.scoreNamesEvent.broadcast();
     }
 
     fun void scorePosTracker() {
