@@ -18,20 +18,25 @@ spork ~ mainMenu.run();
 me.yield();
 
 
+// Playback + audio handling
+ScoreManager scoreManager;
+spork ~ scoreManager.run();
+spork ~ scoreManager.scorePosTracker();
+spork ~ scoreManager.updateScorePos();
+
+
 // Lights handling
 if (enableLights) {
     LightManager lightManager(Defs.LIGHTS_CONFIG_FILENAME);
     spork ~ lightManager.setFaders();
     spork ~ lightManager.setColors();
     spork ~ lightManager.sendDMX();
+
+    // Pass noteColorMap into ScoreManager
+    scoreManager.setNoteColorMap(lightManager.noteColorMap);
 }
 
-
-// Playback + audio handling
-ScoreManager scoreManager;
-spork ~ scoreManager.run();
-spork ~ scoreManager.scorePosTracker();
-spork ~ scoreManager.updateScorePos();
+// Load files
 scoreManager.openDirectory("./scores");
 
 eon => now;

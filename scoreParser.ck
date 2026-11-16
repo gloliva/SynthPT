@@ -176,6 +176,14 @@ public class Score {
         return measure;
     }
 
+    fun void connectInstruments(int noteColorMap[]) {
+        <<< "Connecting instruments for score:", this.name >>>;
+        for (CVInstrument instrument : this.instruments) {
+            instrument.connect();
+            instrument.setNoteColorMap(noteColorMap);
+        }
+    }
+
     fun void connectInstruments() {
         <<< "Connecting instruments for score:", this.name >>>;
         for (CVInstrument instrument : this.instruments) {

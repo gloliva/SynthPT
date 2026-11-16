@@ -35,6 +35,9 @@ public class CVInstrument extends ezInstrument {
     // Tuning
     Tuning @ tuning;
 
+    // Lights
+    int noteColorMap[];
+
     fun @construct(int id, int startChan, string outputs[], Tuning tuning) {
         id => this.id;
         startChan => this.startChan;
@@ -53,8 +56,9 @@ public class CVInstrument extends ezInstrument {
         spork ~ this.sendTrigger();
 
         // Send pitch event for Light handling
-        Events.lightColorEvent.set(this.id, note.pitch()$int);
-        Events.lightColorEvent.broadcast();
+        if (this.noteColorMap != null) {
+            note.pitch()$int => this.noteColorMap[this.id];
+        }
 
         noteID => this.currNote;
         // <<< "Pitch:", note.pitch(), "Volume:", note.velocity(), "Octave:", octave, "ID", noteID >>>;
@@ -93,6 +97,10 @@ public class CVInstrument extends ezInstrument {
                 this.trigger => dac.chan(startChan + outIdx);
             }
         }
+    }
+
+    fun void setNoteColorMap(int noteColorMap[]) {
+        noteColorMap @=> this.noteColorMap;
     }
 
     fun void disconnect() {

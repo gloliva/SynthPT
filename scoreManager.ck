@@ -14,6 +14,9 @@ public class ScoreManager {
 
     FileIO fio;
 
+    // Lighting parameters
+    int noteColorMap[];
+
     fun void openDirectory(string dirName) {
         if (!fio.open(dirName)) {
             Logger.error("Unable to open directory: " + dirName);
@@ -35,7 +38,7 @@ public class ScoreManager {
         Events.scoreNamesEvent.broadcast();
 
         // Set up ScorePlayer
-        this.currScore.connectInstruments();
+        this.currScore.connectInstruments(this.noteColorMap);
         this.player.score(this.currScore.score);
         this.player.instruments(this.currScore.instruments);
     }
@@ -119,7 +122,7 @@ public class ScoreManager {
 
         // Parse new scores
         this.currScore.parse(Utils.joinPath(this.openDirName, scoreFiles[this.currScoreIdx]));
-        this.currScore.connectInstruments();
+        this.currScore.connectInstruments(this.noteColorMap);
         this.player.score(this.currScore.score);
         this.player.instruments(this.currScore.instruments);
         0 => this.player.pos;
@@ -146,5 +149,10 @@ public class ScoreManager {
             Std.scalef(Events.seekerChangeEvent.pos, 0., 1., this.player.startPos(), this.player.endPos()) => float newScorePos;
             newScorePos => this.player.pos;
         }
+    }
+
+    fun void setNoteColorMap(int noteColorMap[]) {
+        // If using LED lights, set the NoteColorMap that is used by CVInstruments
+        noteColorMap @=> this.noteColorMap;
     }
 }

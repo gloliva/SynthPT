@@ -6,6 +6,7 @@ public class LightManager {
     DMX dmx;
     LightConfig @ config;
     ParLight lights[0];
+    int noteColorMap[0];
 
    [
         @(255, 0, 0),
@@ -45,6 +46,7 @@ public class LightManager {
             );
 
             this.lights << light;
+            this.noteColorMap << 0;
             light.print();
         }
 
@@ -56,10 +58,12 @@ public class LightManager {
 
     fun void setColors() {
         while (true) {
-            Events.lightColorEvent => now;
-            Events.lightColorEvent.note % this.colors.size() => int colorIdx;
-            this.lights[Events.lightColorEvent.lightID].setColor(this.colors[colorIdx]);
-            <<< "Light id", Events.lightColorEvent.lightID, "coloridx", colorIdx >>>;
+            for (int i; i < this.lights.size(); i++) {
+                this.noteColorMap[i] % this.colors.size() => int colorIdx;
+                this.lights[i].setColor(this.colors[colorIdx]);
+            }
+
+            10::ms => now;
         }
     }
 
@@ -68,7 +72,6 @@ public class LightManager {
             for (int i; i < this.lights.size(); i++) {
                 adc.chan(i).last() => float envVal;
                 Std.scalef(envVal, 0., 1., 0, 100)$int => int faderVal;
-                <<< "Env value: ", envVal, "Fader val: ", faderVal >>>;
                 this.lights[i].setMaster(faderVal);
             }
 
