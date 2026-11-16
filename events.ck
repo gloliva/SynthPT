@@ -55,10 +55,22 @@ public class SeekerChangeEvent extends Event {
 }
 
 
+public class LightColorEvent extends Event {
+    int lightID;
+    int note;
+
+    fun void set(int lightID, int note) {
+        lightID => this.lightID;
+        note => this.note;
+    }
+}
+
+
 public class Events {
     static ScorePlayerEvent scorePlayerEvent;
     static ScoreNamesEvent scoreNamesEvent;
     static PlayToggleEvent playToggleEvent;
     static ScorePosEvent scorePosEvent;
     static SeekerChangeEvent seekerChangeEvent;
+    static LightColorEvent lightColorEvent;
 }

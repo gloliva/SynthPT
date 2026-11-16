@@ -1,4 +1,4 @@
-@import "tuning.ck"
+@import {"events.ck", "tuning.ck"}
 @import "smuck"
 
 
@@ -20,6 +20,7 @@ public class CVOutputType {
 
 
 public class CVInstrument extends ezInstrument {
+    int id;
     int startChan;
     string outputs[];
 
@@ -34,7 +35,8 @@ public class CVInstrument extends ezInstrument {
     // Tuning
     Tuning @ tuning;
 
-    fun @construct(int startChan, string outputs[], Tuning tuning) {
+    fun @construct(int id, int startChan, string outputs[], Tuning tuning) {
+        id => this.id;
         startChan => this.startChan;
         outputs @=> this.outputs;
         tuning @=> this.tuning;
@@ -49,6 +51,10 @@ public class CVInstrument extends ezInstrument {
         this.tuning.cv(note.pitch()$int, octave) => this.pitch.next;
         note.velocity() => this.gate.next;
         spork ~ this.sendTrigger();
+
+        // Send pitch event for Light handling
+        Events.lightColorEvent.set(this.id, note.pitch()$int);
+        Events.lightColorEvent.broadcast();
 
         noteID => this.currNote;
         // <<< "Pitch:", note.pitch(), "Volume:", note.velocity(), "Octave:", octave, "ID", noteID >>>;

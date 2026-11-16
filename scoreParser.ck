@@ -63,7 +63,7 @@ public class Score {
                 new EDO(12) @=> tuning;
             }
 
-            this.instruments << new CVInstrument(startChan, outputs, tuning);
+            this.instruments << new CVInstrument(voice, startChan, outputs, tuning);
             outputs.size() +=> startChan;
 
             // parse measures

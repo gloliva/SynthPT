@@ -1,0 +1,23 @@
+{
+    "dmx" : {
+        "protocol": "serial_raw",
+        "port": "/dev/cu.usbserial-BG04ENHK",
+        "rts": false
+    },
+    "lights" : [
+        {
+            "dmxChannel" : 1,
+            "numChannels" : 9,
+            "masterChannel" : 1,
+            "redChannel" : 2,
+            "lightType" : 0
+        },
+        {
+            "dmxChannel" : 10,
+            "numChannels" : 9,
+            "masterChannel" : 1,
+            "redChannel" : 2,
+            "lightType" : 0
+        }
+    ]
+}
