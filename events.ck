@@ -34,6 +34,7 @@ public class PlayToggleEvent extends Event {
 
 
 public class ScorePosEvent extends Event {
+    // Score position coming from ScorePlayer
     float currPos;
     float endPos;
 
@@ -44,9 +45,20 @@ public class ScorePosEvent extends Event {
 }
 
 
+public class SeekerChangeEvent extends Event {
+    // Score position coming from clicking on seeker
+    float pos;
+
+    fun void set(float pos) {
+        pos => this.pos;
+    }
+}
+
+
 public class Events {
     static ScorePlayerEvent scorePlayerEvent;
     static ScoreNamesEvent scoreNamesEvent;
     static PlayToggleEvent playToggleEvent;
     static ScorePosEvent scorePosEvent;
+    static SeekerChangeEvent seekerChangeEvent;
 }

@@ -46,6 +46,7 @@ public class MainMenu {
             // Play/Pause Button
             me.dir() + "../assets/" + this.playIcons[this.playIconIdx] => string playIconFile;
 
+            gui.pushID("playButton");
             UIStyle.pushColor(UIStyle.COL_BUTTON, Color.WHITE);
             UIStyle.pushColor(UIStyle.COL_BUTTON_PRESSED, Color.GREEN);
             UIStyle.pushVar(UIStyle.VAR_BUTTON_CONTROL_POINTS, @(0.5, 0.5));
@@ -55,9 +56,9 @@ public class MainMenu {
             gui.toggleButton("", playIconFile, @(0., -0.2), this.playToggle) => this.playToggle;
             UIStyle.popVar(4);
             UIStyle.popColor(2);
+            gui.popID();
 
             if (this.playToggle != this.prevPlayToggle) {
-                <<< "playToggle", this.playToggle, "PrevToggle", this.prevPlayToggle >>>;
                 if (this.playToggle == 1) {
                     1 => this.playIconIdx;
                     Events.scorePlayerEvent.set(Events.scorePlayerEvent.PLAY);
@@ -81,7 +82,6 @@ public class MainMenu {
             UIStyle.popColor(2);
 
             if (nextClicked) {
-                <<< "did we click next?" >>>;
                 Events.scorePlayerEvent.set(Events.scorePlayerEvent.NEXT);
                 Events.scorePlayerEvent.signal();
             }
@@ -108,9 +108,17 @@ public class MainMenu {
             UIStyle.pushVar(UIStyle.VAR_SLIDER_HANDLE_BORDER_RADIUS, 0.4);
             UIStyle.pushVar(UIStyle.VAR_SLIDER_TRACK_BORDER_WIDTH, 0.2);
             UIStyle.pushVar(UIStyle.VAR_SLIDER_HANDLE_SIZE, @(0.1, 0.3));
-            gui.slider("seeker", @(0, 0.0), 0, 1, seekerPos) => seekerPos;
+            gui.slider("seeker", @(0, 0.0), 0, 1, this.seekerPos) => float seekerVal;
             UIStyle.popVar(4);
             UIStyle.popColor(2);
+
+            // Clicked on the seeker this frame
+            if (GWindow.mouseLeftDown() && seekerVal != this.seekerPos) {
+                Events.seekerChangeEvent.set(seekerVal);
+                Events.seekerChangeEvent.broadcast();
+            }
+
+            seekerVal => this.seekerPos;
         }
     }
 

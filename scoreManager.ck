@@ -98,7 +98,6 @@ public class ScoreManager {
                 Events.scorePosEvent.signal();
             }
         } else {
-            <<< "What player pos are we at?", this.player.pos() >>>;
             this.updateCurrentScore(this.PREV_SCORE);
             Events.playToggleEvent.set(1);
             Events.playToggleEvent.signal();
@@ -138,6 +137,14 @@ public class ScoreManager {
             }
 
             25::ms => now;
+        }
+    }
+
+    fun void updateScorePos() {
+        while (true) {
+            Events.seekerChangeEvent => now;
+            Std.scalef(Events.seekerChangeEvent.pos, 0., 1., this.player.startPos(), this.player.endPos()) => float newScorePos;
+            newScorePos => this.player.pos;
         }
     }
 }
