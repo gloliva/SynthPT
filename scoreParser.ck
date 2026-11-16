@@ -11,7 +11,7 @@ public class Score {
     int bpm;
 
     // smuck parameters
-    ezScore score;
+    ezScore @ score;
     CVInstrument instruments[0];
 
     // error checking
@@ -21,6 +21,10 @@ public class Score {
 
 
     fun void parse(string file) {
+        // Reset everything
+        new ezScore() @=> this.score;
+        this.instruments.reset();
+
         HashMap.fromJsonFile(file) @=> this.json;
 
         // Parse global score params
@@ -108,6 +112,11 @@ public class Score {
                     parts[voice].add(measure.copy());
                 }
             }
+            // Add a rest measure at the end
+            ezMeasure restMeasure;
+            restMeasure.pitches("r");
+            restMeasure.rhythms("w");
+            parts[voice].add(restMeasure);
         }
 
         // Add parts to score
@@ -165,6 +174,20 @@ public class Score {
         }
 
         return measure;
+    }
+
+    fun void connectInstruments() {
+        <<< "Connecting instruments for score:", this.name >>>;
+        for (CVInstrument instrument : this.instruments) {
+            instrument.connect();
+        }
+    }
+
+    fun void disconnectInstruments() {
+        <<< "DISconnecting instruments for score:", this.name >>>;
+        for (CVInstrument instrument : this.instruments) {
+            instrument.disconnect();
+        }
     }
 
     fun float durationSecs() {

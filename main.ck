@@ -14,6 +14,7 @@ me.yield();
 ScoreManager scoreManager;
 spork ~ scoreManager.run();
 spork ~ scoreManager.scorePosTracker();
+<<< "here?" >>>;
 scoreManager.openDirectory("./scores");
 
 eon => now;
