@@ -1,4 +1,4 @@
-@import {"defs.ck", "scoreParser.ck", "scoreManager.ck"}
+@import {"defs.ck", "globals.ck", "scoreParser.ck", "scoreManager.ck"}
 @import "./lights/lightManager.ck"
 @import "./graphics/mainMenu.ck"
 
@@ -7,6 +7,11 @@ int enableLights;
 if (me.args() > 0) {
     me.arg(0) => Std.atoi => enableLights;
 }
+
+if (me.args() > 1) {
+    me.arg(1) => Std.atoi => Globals.VERBOSE;
+}
+
 
 // Graphics handling
 MainMenu mainMenu();

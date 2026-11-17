@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+#
+# Launch the synth performance tool.
+#
+# Usage: ./run.sh [-l]
+#   -l   enable LED lights (passes main.ck:1); default is disabled (main.ck:0)
+
+usage() {
+    echo "Usage: $0 [-l]" >&2
+    echo "  -l   enable LED lights" >&2
+    echo "  -l   enable LED lights" >&2
+}
+
+LEDS=0
+VERBOSE=0
+
+while getopts "lvh" opt; do
+    case "$opt" in
+        l) LEDS=1 ;;
+        v) VERBOSE=1 ;;
+        h) usage; exit 0 ;;
+        *) usage; exit 1 ;;
+    esac
+done
+
+chuck \
+    --chugin:/Users/gloliva/workspace/scratch/chuck/ChucK-DMX/build/DMX.chug \
+    --dac:3 --out:16 \
+    --adc:3 --in:4 \
+    --srate:48000 \
+    "main.ck:${LEDS}:${VERBOSE}"

@@ -1,4 +1,4 @@
-@import {"events.ck", "tuning.ck"}
+@import {"events.ck", "logger.ck", "tuning.ck"}
 @import "smuck"
 
 
@@ -56,12 +56,12 @@ public class CVInstrument extends ezInstrument {
         spork ~ this.sendTrigger();
 
         // Send pitch event for Light handling
-        if (this.noteColorMap != null) {
+        if (this.noteColorMap != null && this.id < this.noteColorMap.size()) {
             note.pitch()$int => this.noteColorMap[this.id];
         }
 
         noteID => this.currNote;
-        // <<< "Pitch:", note.pitch(), "Volume:", note.velocity(), "Octave:", octave, "ID", noteID >>>;
+        Logger.debug("[ID] " + this.id + ", [Pitch] " + note.pitch() + ", [Volume] " + note.velocity() + ", [Octave] " + octave);
     }
 
     fun void noteOff(ezNote note, int voice) {
@@ -74,7 +74,6 @@ public class CVInstrument extends ezInstrument {
         note.data()[1]$int => int noteID;
 
         if (noteID == this.currNote) {
-            // <<< "\tDone for pitch:", note.pitch() >>>;
             0. => this.gate.next;
         }
     }
