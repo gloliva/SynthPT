@@ -1,8 +1,8 @@
 @import {"config.ck", "types.ck"}
-@import "../utils.ck"
+@import {"../base.ck", "../utils.ck"}
 
 
-public class LightManager {
+public class LightManager extends Base {
     DMX dmx;
     LightConfig @ config;
     ParLight lights[0];
@@ -54,6 +54,12 @@ public class LightManager {
         for (int i; i < adc.channels(); i++) {
             adc.chan(i) => blackhole;
         }
+
+        // Shred management
+        spork ~ this.setFaders() @=> Shred setFadersShred;
+        spork ~ this.setColors() @=> Shred setColorsShred;
+        spork ~ this.sendDMX() @=> Shred sendDMXShred;
+        this.addShreds([setFadersShred, setColorsShred, sendDMXShred]);
     }
 
     fun void setColors() {

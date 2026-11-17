@@ -1,8 +1,8 @@
-@import "../events.ck"
+@import {"../base.ck", "../events.ck"}
 @import "ChuGUI"
 
 
-public class MainMenu {
+public class MainMenu extends Base {
     // Buttons
     0 => int prevPlayToggle;
     0 => int playToggle;
@@ -20,10 +20,20 @@ public class MainMenu {
     float seekerPos;
 
     fun @construct() {
+        // ChuGL setup
         GWindow.title("SynthPT");
+        false => GWindow.closeable;
         8. => GG.scene().camera().posZ;
         GG.scene().camera().orthographic();
         Color.BLACK => GG.scene().backgroundColor;
+
+        // Shred management
+        spork ~ this.updateUI() @=> Shred updateUIShred;
+        spork ~ this.updateScoreNames() @=> Shred updateScoreNamesShred;
+        spork ~ this.updateScorePos() @=> Shred updateScorePosShred;
+        spork ~ this.updatePlayToggle() @=> Shred updatePlayToggleShred;
+        spork ~ this.run() @=> Shred runShred;
+        this.addShreds([updateUIShred, updateScoreNamesShred, updateScorePosShred, updatePlayToggleShred, runShred]);
     }
 
     fun void updateUI() {

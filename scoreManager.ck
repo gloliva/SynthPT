@@ -1,7 +1,7 @@
-@import {"events.ck", "logger.ck", "scoreParser.ck", "utils.ck"}
+@import {"base.ck", "events.ck", "logger.ck", "scoreParser.ck", "utils.ck"}
 @import "smuck"
 
-public class ScoreManager {
+public class ScoreManager extends Base {
     -1 => int PREV_SCORE;
     1 => int NEXT_SCORE;
 
@@ -16,6 +16,13 @@ public class ScoreManager {
 
     // Lighting parameters
     int noteColorMap[];
+
+    fun @construct() {
+        spork ~ this.run() @=> Shred runShred;
+        spork ~ this.scorePosTracker() @=> Shred scorePosTrackerShred;
+        spork ~ this.updateScorePos() @=> Shred updateScorePosShred;
+        this.addShreds([runShred, scorePosTrackerShred, updateScorePosShred]);
+    }
 
     fun void openDirectory(string dirName) {
         if (!fio.open(dirName)) {

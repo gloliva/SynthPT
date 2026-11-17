@@ -5,7 +5,7 @@ public class LightType {
 
 
 public class ParLight {
-    DMX dmx;
+    DMX @ dmx;
 
     int dmxChannel;
     int numChannels;

@@ -10,27 +10,17 @@ if (me.args() > 0) {
 
 // Graphics handling
 MainMenu mainMenu();
-spork ~ mainMenu.updateUI();
-spork ~ mainMenu.updateScoreNames();
-spork ~ mainMenu.updateScorePos();
-spork ~ mainMenu.updatePlayToggle();
-spork ~ mainMenu.run();
 me.yield();
 
 
 // Playback + audio handling
-ScoreManager scoreManager;
-spork ~ scoreManager.run();
-spork ~ scoreManager.scorePosTracker();
-spork ~ scoreManager.updateScorePos();
+ScoreManager scoreManager();
 
 
 // Lights handling
+LightManager @ lightManager;
 if (enableLights) {
-    LightManager lightManager(Defs.LIGHTS_CONFIG_FILENAME);
-    spork ~ lightManager.setFaders();
-    spork ~ lightManager.setColors();
-    spork ~ lightManager.sendDMX();
+    new LightManager(Defs.LIGHTS_CONFIG_FILENAME) @=> lightManager;
 
     // Pass noteColorMap into ScoreManager
     scoreManager.setNoteColorMap(lightManager.noteColorMap);
@@ -39,4 +29,28 @@ if (enableLights) {
 // Load files
 scoreManager.openDirectory("./scores");
 
-eon => now;
+
+// Wait for close events + cleanup on exit
+1 => int running;
+
+
+fun void handleWindowClose() {
+    GWindow.closeEvent() => now;
+    0 => running;
+} spork ~ handleWindowClose();
+
+
+while (running) {
+    if (GWindow.keyDown(GWindow.KEY_ESCAPE)) {
+        0 => running;
+    }
+
+    GG.nextFrame() => now;
+}
+
+
+// Cleanup and exit
+if (enableLights) {
+    scoreManager.close();
+    lightManager.close();
+}
