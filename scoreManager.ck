@@ -41,13 +41,14 @@ public class ScoreManager extends Base {
 
         // TODO: add validation for file, make sure its JSON
         this.currScore.parse(Utils.joinPath(this.openDirName, scoreFiles[this.currScoreIdx]));
-        Events.scoreNamesEvent.set(this.currScore.name, "TODO");
-        Events.scoreNamesEvent.broadcast();
+        Events.scoreInfoEvent.set(this.currScore.name, this.currScore.durationSecs());
+        Events.scoreInfoEvent.broadcast();
 
         // Set up ScorePlayer
         this.currScore.connectInstruments(this.noteColorMap);
         this.player.score(this.currScore.score);
         this.player.instruments(this.currScore.instruments);
+        this.currScore.printScore();
     }
 
     fun void run() {
@@ -134,8 +135,8 @@ public class ScoreManager extends Base {
         this.player.instruments(this.currScore.instruments);
         0 => this.player.pos;
 
-        Events.scoreNamesEvent.set(this.currScore.name, "TODO");
-        Events.scoreNamesEvent.broadcast();
+        Events.scoreInfoEvent.set(this.currScore.name, this.currScore.durationSecs());
+        Events.scoreInfoEvent.broadcast();
     }
 
     fun void scorePosTracker() {

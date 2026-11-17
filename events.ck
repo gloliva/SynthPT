@@ -13,13 +13,13 @@ public class ScorePlayerEvent extends Event {
 }
 
 
-public class ScoreNamesEvent extends Event {
-    string curr;
-    string next;
+public class ScoreInfoEvent extends Event {
+    string name;
+    float seconds;
 
-    fun void set(string curr, string next) {
-        curr => this.curr;
-        next => this.next;
+    fun void set(string name, float seconds) {
+        name => this.name;
+        seconds => this.seconds;
     }
 }
 
@@ -57,7 +57,7 @@ public class SeekerChangeEvent extends Event {
 
 public class Events {
     static ScorePlayerEvent scorePlayerEvent;
-    static ScoreNamesEvent scoreNamesEvent;
+    static ScoreInfoEvent scoreInfoEvent;
     static PlayToggleEvent playToggleEvent;
     static ScorePosEvent scorePosEvent;
     static SeekerChangeEvent seekerChangeEvent;

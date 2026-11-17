@@ -16,6 +16,11 @@ public class MainMenu extends Base {
     string currSongName;
     string nextSongName;
 
+    // Song durations
+    "00:00" => string timeElapsed;
+    "00:00" => string songLengthTimestamp;
+    float songLengthSeconds;
+
     // Seeker
     float seekerPos;
 
@@ -29,11 +34,31 @@ public class MainMenu extends Base {
 
         // Shred management
         spork ~ this.updateUI() @=> Shred updateUIShred;
-        spork ~ this.updateScoreNames() @=> Shred updateScoreNamesShred;
+        spork ~ this.updateScoreInfo() @=> Shred updateScoreInfoShred;
         spork ~ this.updateScorePos() @=> Shred updateScorePosShred;
         spork ~ this.updatePlayToggle() @=> Shred updatePlayToggleShred;
         spork ~ this.run() @=> Shred runShred;
-        this.addShreds([updateUIShred, updateScoreNamesShred, updateScorePosShred, updatePlayToggleShred, runShred]);
+        this.addShreds([updateUIShred, updateScoreInfoShred, updateScorePosShred, updatePlayToggleShred, runShred]);
+    }
+
+    fun string _secToTimestamp(float timeInSec) {
+        Math.floor(timeInSec / 60.)$int => int minutes;
+        (timeInSec % 60)$int => int seconds;
+
+        string timestamp;
+        if (minutes < 10) {
+            "0" + minutes + ":" => timestamp;
+        } else {
+            minutes + ":" => timestamp;
+        }
+
+        if (seconds < 10) {
+            timestamp + "0" + seconds => timestamp;
+        } else {
+            timestamp + seconds => timestamp;
+        }
+
+        return timestamp;
     }
 
     fun void updateUI() {
@@ -45,11 +70,26 @@ public class MainMenu extends Base {
             GG.nextFrame() => now; // must be called before rendering any components
 
             // Labels
+            gui.pushID("Current Song Name");
             UIStyle.pushColor(UIStyle.COL_LABEL, Color.WHITE);
             UIStyle.pushVar(UIStyle.VAR_LABEL_SIZE, 0.25);
-            UIStyle.pushVar(UIStyle.VAR_LABEL_CONTROL_POINTS, @(0, 0.5));
-            gui.label("Now playing: " + this.currSongName, @(-0.4, 0.3));
-            gui.label("Up next: " + this.nextSongName, @(-0.4, 0.2));
+            UIStyle.pushVar(UIStyle.VAR_LABEL_CONTROL_POINTS, @(0.5, 0.5));
+            gui.label(this.currSongName, @(0.0, 0.2));
+            UIStyle.popVar(2);
+            UIStyle.popColor(1);
+            gui.popID();
+
+            // Time handling labels
+            UIStyle.pushColor(UIStyle.COL_LABEL, Color.WHITE);
+            UIStyle.pushVar(UIStyle.VAR_LABEL_SIZE, 0.15);
+            UIStyle.pushVar(UIStyle.VAR_LABEL_CONTROL_POINTS, @(0.5, 0.5));
+            gui.pushID("Time Elapsed");
+            gui.label(this.timeElapsed, @(-0.45, 0.));
+            gui.popID();
+
+            gui.pushID("Song Length");
+            gui.label(this.songLengthTimestamp, @(0.45, 0.));
+            gui.popID();
             UIStyle.popVar(2);
             UIStyle.popColor(1);
 
@@ -132,11 +172,12 @@ public class MainMenu extends Base {
         }
     }
 
-    fun void updateScoreNames() {
+    fun void updateScoreInfo() {
         while (true) {
-            Events.scoreNamesEvent => now;
-            Events.scoreNamesEvent.curr => this.currSongName;
-            Events.scoreNamesEvent.next => this.nextSongName;
+            Events.scoreInfoEvent => now;
+            Events.scoreInfoEvent.name => this.currSongName;
+            Events.scoreInfoEvent.seconds => this.songLengthSeconds;
+            this._secToTimestamp(Events.scoreInfoEvent.seconds) => this.songLengthTimestamp;
         }
     }
 
@@ -154,6 +195,8 @@ public class MainMenu extends Base {
         while (true) {
             Events.scorePosEvent => now;
             Std.scalef(Events.scorePosEvent.currPos, 0., Events.scorePosEvent.endPos, 0., 1.) => this.seekerPos;
+            Std.scalef(Events.scorePosEvent.currPos, 0., Events.scorePosEvent.endPos, 0., this.songLengthSeconds) => float seconds;
+            this._secToTimestamp(seconds) => this.timeElapsed;
         }
     }
 
