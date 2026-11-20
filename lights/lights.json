@@ -10,6 +10,7 @@
             "numChannels" : 9,
             "masterChannel" : 1,
             "redChannel" : 2,
+            "maxBrightness": 100,
             "lightType" : 0
         },
         {
@@ -17,7 +18,16 @@
             "numChannels" : 9,
             "masterChannel" : 1,
             "redChannel" : 2,
+            "maxBrightness": 100,
             "lightType" : 0
+        },
+        {
+            "dmxChannel": 19,
+            "numChannels": 7,
+            "masterChannel": 1,
+            "redChannel": 2,
+            "maxBrightness": 127,
+            "lightType": 1
         }
     ]
 }

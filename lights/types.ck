@@ -15,7 +15,9 @@ public class ParLight {
     int greenChannel;
     int blueChannel;
 
-    fun @construct(DMX dmx, int dmxChannel, int numChannels, int masterFaderChannel, int redChannel) {
+    int maxBrightness;
+
+    fun @construct(DMX dmx, int dmxChannel, int numChannels, int masterFaderChannel, int redChannel, int maxBrightness) {
         dmx @=> this.dmx;
         dmxChannel => this.dmxChannel;
         numChannels => this.numChannels;
@@ -23,6 +25,7 @@ public class ParLight {
         dmxChannel + redChannel - 1 => this.redChannel;
         this.redChannel + 1 => this.greenChannel;
         this.greenChannel + 1 => this.blueChannel;
+        maxBrightness => this.maxBrightness;
     }
 
     fun void setMaster(int val) {

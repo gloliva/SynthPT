@@ -42,7 +42,8 @@ public class LightManager extends Base {
                 lightConfig.getInt("dmxChannel"),
                 lightConfig.getInt("numChannels"),
                 lightConfig.getInt("masterChannel"),
-                lightConfig.getInt("redChannel")
+                lightConfig.getInt("redChannel"),
+                lightConfig.getInt("maxBrightness")
             );
 
             this.lights << light;
@@ -76,9 +77,10 @@ public class LightManager extends Base {
     fun void setFaders() {
         while (true) {
             for (int i; i < this.lights.size(); i++) {
+                this.lights[i] @=> ParLight led;
                 adc.chan(i).last() => float envVal;
-                Std.scalef(envVal, 0., 1., 0, 100)$int => int faderVal;
-                this.lights[i].setMaster(faderVal);
+                Std.scalef(envVal, 0., 1., 0, led.maxBrightness)$int => int faderVal;
+                led.setMaster(faderVal);
             }
 
             10::ms => now;
